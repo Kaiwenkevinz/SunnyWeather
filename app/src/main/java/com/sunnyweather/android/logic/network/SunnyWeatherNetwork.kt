@@ -1,5 +1,6 @@
 package com.sunnyweather.android.logic.network
 
+import android.util.Log
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -11,15 +12,20 @@ import kotlin.coroutines.suspendCoroutine
 
 object SunnyWeatherNetwork {
 
+    // PlaceService接口的封装
     private val placeService = ServiceCreator.create<PlaceService>()
-
     suspend fun searchPlaces(query: String) = placeService.searchPlaces(query).await()  // searchPlaces返回的对象是Call接口的，所以可以调用Call接口的扩展函数await()
 
-    // Call<T> 的扩展函数
-    private suspend fun <T> Call<T>.await(): T {
+    // WeatherService接口的封装
+    private val weatherService = ServiceCreator.create<WeatherService>()
+    suspend fun getDailyWeather(lng: String, lat: String) = weatherService.getDailyWeather(lng, lat).await()
+    suspend fun getRealtimeWeather(lng: String, lat: String) = weatherService.getRealtimeWeather(lng, lat).await()
+
+    private suspend fun <T> Call<T>.await(): T {  // Call<T> 的扩展函数
         return suspendCoroutine { continuation ->
             enqueue(object : Callback<T> {
                 override fun onResponse(call: Call<T>, response: Response<T>) {
+                    Log.d("SunnyWeatherNetwork", call.request().url().toString())
                     val body = response.body()
                     if (body != null) {
                         continuation.resume(body)
@@ -34,5 +40,4 @@ object SunnyWeatherNetwork {
             })
         }
     }
-
 }

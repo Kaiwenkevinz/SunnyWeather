@@ -1,5 +1,6 @@
 package com.sunnyweather.android.ui.weather
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -32,6 +33,9 @@ class WeatherActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val decorView = window.decorView
+        decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        window.statusBarColor = Color.TRANSPARENT
 
         binding = ActivityWeatherBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -66,18 +70,18 @@ class WeatherActivity : AppCompatActivity() {
     }
 
     private fun showWeatherInfo(weather: Weather) {
-        placeItemBinding.placeName.text = viewModel.placeName
+        nowBinding.placeName.text = viewModel.placeName  // 地名
 
         val realtime = weather.realtime
         val daily = weather.daily
 
-        // 填充now.xml
+        // 填充now.xml 当日天气
         nowBinding.currentTemp.text = "${realtime.temperature.toInt()} C"
         nowBinding.currentSky.text = getSky(realtime.skycon).info
         nowBinding.currentAQI.text = "空气指数 ${realtime.airQuality.aqi.chn.toInt()}"
         nowBinding.nowLayout.setBackgroundResource(getSky(realtime.skycon).bg)
 
-        // 填充forecast.xml
+        // 填充forecast.xml 天气预报
         forecastBinding.forecastLinearLayout.removeAllViews()
         val days = daily.skycon.size
         for (i in 0 until days) {
@@ -101,7 +105,7 @@ class WeatherActivity : AppCompatActivity() {
             forecastBinding.forecastLinearLayout.addView(view)
         }
 
-//        填充life_index.xml
+//        填充life_index.xml 生活指数
         val lifeIndex = daily.lifeIndex
         lifeIndexBinding.coldRiskText.text = lifeIndex.coldRisk[0].desc
         lifeIndexBinding.dressingText.text = lifeIndex.dressing[0].desc

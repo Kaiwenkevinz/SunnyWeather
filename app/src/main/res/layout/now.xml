@@ -19,7 +19,8 @@
             android:layout_gravity="center"
             android:ellipsize="middle"
             android:textColor="#fff"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            android:fitsSystemWindows="true"/>
 
     </FrameLayout>
 
